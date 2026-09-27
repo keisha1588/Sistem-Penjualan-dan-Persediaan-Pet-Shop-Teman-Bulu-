@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f1ed">
+  <title>Teman Bulu | Penjualan Pet Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#dashboard" aria-label="Teman Bulu dashboard">
+        <span class="brand-mark">tb</span>
+        <span><strong>teman bulu</strong><small>pet shop manager</small></span>
+      </a>
+      <p class="nav-label">MENU UTAMA</p>
+      <nav class="nav-list" aria-label="Navigasi utama">
+        <button class="nav-item active" data-view="dashboard"><span class="nav-symbol">01</span>Ringkasan</button>
+        <button class="nav-item" data-view="customers"><span class="nav-symbol">02</span>Pelanggan</button>
+        <button class="nav-item" data-view="products"><span class="nav-symbol">03</span>Produk</button>
+        <button class="nav-item" data-view="history"><span class="nav-symbol">04</span>Penjualan</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="side-note"><span class="note-dot"></span><div><strong>Ramah untuk semua</strong><small>Tempat kebutuhan si manis</small></div></div>
+        <span class="side-version">TEMAN BULU / 2026</span>
+      </div>
+    </aside>
+
+    <main class="main-shell">
+      <header class="topbar">
+        <div class="breadcrumb"><span>Teman Bulu</span><span class="crumb-divider">/</span><span id="page-crumb">Ringkasan</span></div>
+        <div class="topbar-actions">
+          <span class="connection-status" id="connection-status"><span class="status-dot"></span><span id="connection-label">Belum terhubung</span></span>
+          <button class="button button-outline button-small" id="open-settings" type="button">Pengaturan Supabase</button>
+        </div>
+      </header>
+
+      <section class="view active" id="view-dashboard">
+        <div class="page-heading">
+          <div><p class="eyebrow" id="today-label">TOKO HEWAN KESAYANGAN</p><h1>Penjualan <span>hari ini</span></h1><p class="heading-note">Semua kebutuhan kecil mereka, tercatat rapi.</p></div>
+          <div class="heading-date" id="date-label"></div>
+        </div>
+        <div class="setup-notice" id="setup-notice">
+          <div class="notice-icon">i</div>
+          <div><strong>Belum dapat memuat database</strong><p>Periksa Project URL dan publishable key di <code>frontend/app.js</code>, lalu jalankan ulang <code>backend/schema.sql</code> untuk menambah persediaan dan profit.</p></div>
+          <button class="text-button" id="notice-settings" type="button">Periksa koneksi <span>→</span></button>
+        </div>
+        <div class="stats-grid">
+          <article class="stat-panel stat-highlight"><div class="stat-top"><span>Omzet hari ini</span><span class="stat-mark">Rp</span></div><strong class="stat-value" id="today-revenue">Rp0</strong><small id="today-count">Belum ada transaksi</small></article>
+          <article class="stat-panel"><div class="stat-top"><span>Profit hari ini</span><span class="stat-mark mark-green">↗</span></div><strong class="stat-value" id="today-profit">Rp0</strong><small id="today-profit-note">Belum ada data profit</small></article>
+          <article class="stat-panel"><div class="stat-top"><span>Total transaksi</span><span class="stat-mark mark-pink">#</span></div><strong class="stat-value" id="total-sales">0</strong><small>Seluruh transaksi tersimpan</small></article>
+          <article class="stat-panel"><div class="stat-top"><span>Pelanggan terdaftar</span><span class="stat-mark mark-green">+</span></div><strong class="stat-value" id="total-customers">0</strong><small id="product-count">0 produk aktif</small></article>
+        </div>
+
+        <div class="section-heading"><div><p class="eyebrow">KASIR</p><h2>Buat penjualan</h2></div><span class="section-caption">Produk dan harga mengikuti katalog</span></div>
+        <div class="sale-layout">
+          <section class="panel sale-panel">
+            <div class="panel-heading"><div><span class="step-number">01</span><h3>Detail pesanan</h3></div><span class="panel-kicker">PESANAN BARU</span></div>
+            <label class="field-label" for="sale-customer">Pelanggan</label>
+            <select class="input" id="sale-customer"><option value="">Pelanggan umum</option></select>
+            <div class="product-entry">
+              <div class="field-block"><label class="field-label" for="sale-product">Pilih produk</label><select class="input" id="sale-product"><option value="">Pilih dari katalog</option></select></div>
+              <div class="field-block price-block"><label class="field-label" for="sale-price">Harga</label><input class="input input-readonly" id="sale-price" value="-" readonly></div>
+              <div class="field-block quantity-block"><label class="field-label" for="sale-quantity">Jumlah</label><input class="input" id="sale-quantity" type="number" min="1" value="1"></div>
+              <button class="button button-secondary add-button" id="add-to-cart" type="button">Tambah</button>
+            </div>
+            <div class="cart-wrap">
+              <table class="data-table cart-table"><thead><tr><th>Produk</th><th>Jumlah</th><th>Subtotal</th><th></th></tr></thead><tbody id="cart-rows"><tr class="empty-row"><td colspan="4">Belum ada produk di pesanan.</td></tr></tbody></table>
+            </div>
+            <div class="order-footer"><div><span>Total penjualan</span><strong id="cart-total">Rp0</strong></div><button class="button button-primary" id="save-sale" type="button" disabled>Simpan penjualan <span>→</span></button></div>
+            <p class="form-feedback" id="sale-feedback" aria-live="polite"></p>
+          </section>
+          <aside class="side-panel">
+            <div class="panel-heading"><div><span class="step-number step-soft">02</span><h3>Ringkasan</h3></div></div>
+            <div class="summary-illustration"><span class="illustration-orbit orbit-one"></span><span class="illustration-orbit orbit-two"></span><span class="illustration-paw">tb</span></div>
+            <p class="summary-title">Pesanan penuh kasih</p><p class="summary-copy">Pilih pelanggan dan produk. Harga otomatis diambil dari katalog.</p>
+            <div class="summary-line"><span>Baris produk</span><strong id="cart-lines">0</strong></div>
+            <div class="summary-line"><span>Jumlah barang</span><strong id="cart-quantity-total">0</strong></div>
+            <div class="summary-line"><span>Estimasi profit</span><strong id="cart-profit">Rp0</strong></div>
+            <div class="summary-line summary-total"><span>Total</span><strong id="summary-total">Rp0</strong></div>
+          </aside>
+        </div>
+
+        <div class="section-heading history-heading"><div><p class="eyebrow">TERBARU</p><h2>Penjualan terakhir</h2></div><button class="text-button" data-go-view="history" type="button">Lihat semua <span>→</span></button></div>
+        <section class="panel table-panel"><div class="table-scroll"><table class="data-table"><thead><tr><th>WAKTU</th><th>PELANGGAN</th><th>ITEM</th><th>TOTAL</th><th>PROFIT</th><th></th></tr></thead><tbody id="recent-sales"><tr class="empty-row"><td colspan="6">Hubungkan database untuk melihat transaksi.</td></tr></tbody></table></div></section>
+      </section>
+
+      <section class="view" id="view-customers">
+        <div class="page-heading"><div><p class="eyebrow">DATA TOKO</p><h1>Daftar <span>pelanggan</span></h1><p class="heading-note">Catat pelanggan agar setiap kunjungan terasa lebih dekat.</p></div><span class="count-chip" id="customer-page-count">0 pelanggan</span></div>
+        <div class="management-layout"><section class="panel form-panel"><div class="panel-heading"><div><span class="step-number">+</span><h3>Pelanggan baru</h3></div></div><form id="customer-form"><label class="field-label" for="customer-name">Nama pelanggan</label><input class="input" id="customer-name" maxlength="100" placeholder="Contoh: Naya Putri" required><label class="field-label" for="customer-phone">Nomor telepon</label><input class="input" id="customer-phone" maxlength="30" placeholder="08xxxxxxxxxx"><label class="field-label" for="customer-email">Email</label><input class="input" id="customer-email" type="email" maxlength="120" placeholder="nama@email.com"><button class="button button-primary full-button" type="submit">Simpan pelanggan <span>→</span></button><p class="form-feedback" id="customer-feedback" aria-live="polite"></p></form></section><section class="panel table-panel management-table"><div class="table-panel-heading"><div><p class="eyebrow">PELANGGAN</p><h2>Semua pelanggan</h2></div><span class="table-count" id="customer-table-count">0 data</span></div><div class="table-scroll"><table class="data-table"><thead><tr><th>NAMA</th><th>TELEPON</th><th>EMAIL</th><th></th></tr></thead><tbody id="customer-rows"><tr class="empty-row"><td colspan="4">Belum ada pelanggan.</td></tr></tbody></table></div></section></div>
+      </section>
+
+      <section class="view" id="view-products">
+        <div class="page-heading"><div><p class="eyebrow">KATALOG TOKO</p><h1>Produk <span>pilihan</span></h1><p class="heading-note">Stok awal bervariasi; sesuaikan jumlah dan harga modal lewat Atur.</p></div><span class="count-chip" id="product-page-count">0 produk</span></div>
+        <div class="management-layout"><section class="panel form-panel"><div class="panel-heading"><div><span class="step-number">+</span><h3>Produk baru</h3></div></div><form id="product-form"><label class="field-label" for="product-name">Nama produk</label><input class="input" id="product-name" maxlength="120" placeholder="Contoh: Pasir tofu 6L" required><label class="field-label" for="product-category">Kategori</label><select class="input" id="product-category"><option>Makanan</option><option>Camilan</option><option>Perawatan</option><option>Aksesori</option><option>Mainan</option><option>Lainnya</option></select><label class="field-label" for="product-purchase-price">Harga beli (Rp)</label><input class="input" id="product-purchase-price" type="number" min="0" step="1" placeholder="30000" required><label class="field-label" for="product-selling-price">Harga jual (Rp)</label><input class="input" id="product-selling-price" type="number" min="1" step="1" placeholder="45000" required><label class="field-label" for="product-stock">Stok awal (unit)</label><input class="input" id="product-stock" type="number" min="0" step="1" placeholder="10" required><button class="button button-primary full-button" type="submit">Simpan produk <span>→</span></button><p class="form-feedback" id="product-feedback" aria-live="polite"></p></form></section><section class="panel table-panel management-table"><div class="table-panel-heading"><div><p class="eyebrow">KATALOG &amp; PERSEDIAAN</p><h2>Produk tersimpan</h2></div><span class="table-count" id="product-table-count">0 data</span></div><div class="table-scroll"><table class="data-table"><thead><tr><th>PRODUK</th><th>KATEGORI</th><th>HARGA BELI</th><th>HARGA JUAL</th><th>STOK</th><th></th></tr></thead><tbody id="product-rows"><tr class="empty-row"><td colspan="6">Belum ada produk.</td></tr></tbody></table></div></section></div>
+      </section>
+
+      <section class="view" id="view-history">
+        <div class="page-heading"><div><p class="eyebrow">ARSIP TOKO</p><h1>Riwayat <span>penjualan</span></h1><p class="heading-note">Total dan profit dihitung dari harga jual serta modal saat transaksi.</p></div><span class="count-chip" id="history-count">0 transaksi</span></div>
+        <section class="panel table-panel history-table-panel"><div class="table-panel-heading"><div><p class="eyebrow">TRANSAKSI</p><h2>Semua penjualan</h2></div><span class="table-count">Profit tersimpan per transaksi</span></div><div class="table-scroll"><table class="data-table"><thead><tr><th>WAKTU</th><th>PELANGGAN</th><th>RINCIAN</th><th>TOTAL PENJUALAN</th><th>PROFIT</th></tr></thead><tbody id="history-sales"><tr class="empty-row"><td colspan="5">Belum ada transaksi.</td></tr></tbody></table></div></section>
+      </section>
+      <footer class="app-footer"><span>Teman Bulu</span><span>Dirawat dengan teliti, untuk mereka yang paling menggemaskan.</span></footer>
+    </main>
+  </div>
+
+  <dialog class="settings-dialog" id="inventory-dialog"><form method="dialog" class="dialog-close-row"><button class="dialog-close" aria-label="Tutup" value="cancel">×</button></form><p class="eyebrow">KONTROL STOK</p><h2>Atur persediaan</h2><p class="dialog-copy" id="inventory-product-name"></p><form id="inventory-form"><input id="inventory-product-id" type="hidden"><label class="field-label" for="inventory-purchase-price">Harga beli (Rp)</label><input class="input" id="inventory-purchase-price" type="number" min="0" step="1" required><label class="field-label" for="inventory-selling-price">Harga jual (Rp)</label><input class="input" id="inventory-selling-price" type="number" min="1" step="1" required><label class="field-label" for="inventory-stock">Stok tersedia (unit)</label><input class="input" id="inventory-stock" type="number" min="0" step="1" required><button class="button button-primary full-button" type="submit">Simpan persediaan <span>→</span></button><p class="form-feedback" id="inventory-feedback" aria-live="polite"></p></form></dialog>
+  <dialog class="settings-dialog" id="settings-dialog"><form method="dialog" class="dialog-close-row"><button class="dialog-close" aria-label="Tutup" value="cancel">×</button></form><p class="eyebrow">KONEKSI DATABASE</p><h2>Pengaturan Supabase</h2><p class="dialog-copy">Gunakan Project URL dan publishable key dari pengaturan API Supabase.</p><form id="settings-form"><label class="field-label" for="project-url">Project URL</label><input class="input" id="project-url" type="url" placeholder="https://project-id.supabase.co" required><label class="field-label" for="anon-key">Publishable key</label><textarea class="input key-input" id="anon-key" rows="3" placeholder="sb_publishable_..." required></textarea><p class="dialog-hint">Publishable key digunakan di browser. Batasi akses dengan RLS; jangan masukkan service role key.</p><button class="button button-primary full-button" type="submit">Simpan dan hubungkan <span>→</span></button><p class="form-feedback" id="settings-feedback" aria-live="polite"></p></form></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
