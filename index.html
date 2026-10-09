@@ -101,8 +101,13 @@
       </section>
 
       <section class="view" id="view-history">
-        <div class="page-heading"><div><p class="eyebrow">ARSIP TOKO</p><h1>Riwayat <span>penjualan</span></h1><p class="heading-note">Total dan profit dihitung dari harga jual serta modal saat transaksi.</p></div><span class="count-chip" id="history-count">0 transaksi</span></div>
-        <section class="panel table-panel history-table-panel"><div class="table-panel-heading"><div><p class="eyebrow">TRANSAKSI</p><h2>Semua penjualan</h2></div><span class="table-count">Profit tersimpan per transaksi</span></div><div class="table-scroll"><table class="data-table"><thead><tr><th>WAKTU</th><th>PELANGGAN</th><th>RINCIAN</th><th>TOTAL PENJUALAN</th><th>PROFIT</th></tr></thead><tbody id="history-sales"><tr class="empty-row"><td colspan="5">Belum ada transaksi.</td></tr></tbody></table></div></section>
+        <div class="page-heading history-page-heading"><div><p class="eyebrow">ARSIP TOKO</p><h1>Riwayat <span>penjualan</span></h1><p class="heading-note">Pilih bulan untuk meninjau dan mengunduh laporan transaksi.</p></div><div class="report-controls"><label class="field-label" for="sales-month">Periode laporan</label><input class="input month-input" id="sales-month" type="month"><button class="button button-primary" id="export-monthly-report" type="button">Unduh rekap CSV <span>↓</span></button></div></div>
+        <div class="stats-grid report-stats">
+          <article class="stat-panel"><div class="stat-top"><span>Transaksi bulan ini</span><span class="stat-mark mark-pink">#</span></div><strong class="stat-value" id="monthly-sale-count">0</strong><small>Jumlah transaksi</small></article>
+          <article class="stat-panel stat-highlight"><div class="stat-top"><span>Omzet bulan ini</span><span class="stat-mark">Rp</span></div><strong class="stat-value" id="monthly-revenue">Rp0</strong><small>Total penjualan kotor</small></article>
+          <article class="stat-panel"><div class="stat-top"><span>Profit bulan ini</span><span class="stat-mark mark-green">↗</span></div><strong class="stat-value" id="monthly-profit">Rp0</strong><small id="monthly-profit-note">Belum ada data profit</small></article>
+        </div>
+        <section class="panel table-panel history-table-panel"><div class="table-panel-heading"><div><p class="eyebrow">TRANSAKSI</p><h2>Transaksi terpilih</h2></div><span class="table-count" id="history-count">0 transaksi</span></div><div class="table-scroll"><table class="data-table"><thead><tr><th>WAKTU</th><th>PELANGGAN</th><th>RINCIAN</th><th>TOTAL PENJUALAN</th><th>PROFIT</th></tr></thead><tbody id="history-sales"><tr class="empty-row"><td colspan="5">Belum ada transaksi.</td></tr></tbody></table></div></section>
       </section>
       <footer class="app-footer"><span>Teman Bulu</span><span>Dirawat dengan teliti, untuk mereka yang paling menggemaskan.</span></footer>
     </main>
