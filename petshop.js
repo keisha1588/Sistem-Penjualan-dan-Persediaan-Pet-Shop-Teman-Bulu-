@@ -33,6 +33,20 @@ function localDate(value, options = {}) {
   });
 }
 
+function currentMonthKey() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function salesForSelectedMonth() {
+  const selectedMonth = byId("sales-month").value || currentMonthKey();
+  return state.sales.filter((sale) => {
+    const date = new Date(sale.created_at);
+    const saleMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+    return saleMonth === selectedMonth;
+  });
+}
+
 function showToast(message, error = false) {
   const toast = byId("toast");
   toast.textContent = message;
@@ -230,9 +244,56 @@ function saleRows(sales, limit = Infinity, detailed = false) {
 }
 
 function renderSales() {
-  byId("recent-sales").innerHTML = state.sales.length ? saleRows(state.sales, 5) : '<tr class="empty-row"><td colspan="5">Belum ada transaksi.</td></tr>';
-  byId("history-sales").innerHTML = saleRows(state.sales, Infinity, true);
-  byId("history-count").textContent = `${state.sales.length} transaksi`;
+  byId("recent-sales").innerHTML = state.sales.length ? saleRows(state.sales, 5) : '<tr class="empty-row"><td colspan="6">Belum ada transaksi.</td></tr>';
+  const monthlySales = salesForSelectedMonth();
+  byId("history-sales").innerHTML = monthlySales.length
+    ? saleRows(monthlySales, Infinity, true)
+    : '<tr class="empty-row"><td colspan="5">Tidak ada transaksi pada bulan ini.</td></tr>';
+  byId("history-count").textContent = `${monthlySales.length} transaksi`;
+  byId("monthly-sale-count").textContent = String(monthlySales.length);
+  byId("monthly-revenue").textContent = money(monthlySales.reduce((sum, sale) => sum + Number(sale.total_amount), 0));
+  const calculatedProfitSales = monthlySales.filter((sale) => sale.total_profit != null);
+  const unknownProfitCount = monthlySales.length - calculatedProfitSales.length;
+  byId("monthly-profit").textContent = money(calculatedProfitSales.reduce((sum, sale) => sum + Number(sale.total_profit), 0));
+  byId("monthly-profit-note").textContent = calculatedProfitSales.length
+    ? `${calculatedProfitSales.length} dihitung${unknownProfitCount ? `, ${unknownProfitCount} tanpa data modal` : ""}`
+    : "Belum ada data profit";
+}
+
+function csvCell(value) {
+  let text = String(value ?? "");
+  if (/^\s*[=+@-]/.test(text)) text = `'${text}`;
+  return `"${text.replace(/"/g, '""')}"`;
+}
+
+function exportMonthlyReport() {
+  const monthlySales = salesForSelectedMonth();
+  if (!monthlySales.length) return showToast("Tidak ada transaksi untuk bulan yang dipilih.");
+
+  const rows = [["Waktu", "Pelanggan", "Produk", "Jumlah", "Harga jual", "Harga beli", "Subtotal", "Profit kotor"]];
+  monthlySales.forEach((sale) => {
+    (sale.sale_details || []).forEach((detail) => rows.push([
+      localDate(sale.created_at, { hour: "2-digit", minute: "2-digit" }),
+      sale.customer_name || "Pelanggan umum",
+      detail.product_name,
+      detail.quantity,
+      detail.unit_price,
+      detail.unit_cost,
+      detail.line_total,
+      detail.line_profit
+    ]));
+  });
+
+  const csv = `\uFEFF${rows.map((row) => row.map(csvCell).join(",")).join("\r\n")}`;
+  const blobUrl = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = `rekap-penjualan-${byId("sales-month").value || currentMonthKey()}.csv`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(blobUrl);
+  showToast("Rekap CSV berhasil dibuat.");
 }
 
 function renderStats() {
@@ -420,6 +481,8 @@ function bindEvents() {
   byId("open-settings").addEventListener("click", openSettings);
   byId("notice-settings").addEventListener("click", openSettings);
   byId("settings-form").addEventListener("submit", saveSettings);
+  byId("sales-month").addEventListener("change", renderSales);
+  byId("export-monthly-report").addEventListener("click", exportMonthlyReport);
   byId("sale-product").addEventListener("change", updateSelectedPrice);
   byId("add-to-cart").addEventListener("click", addProductToCart);
   byId("save-sale").addEventListener("click", saveSale);
@@ -463,6 +526,7 @@ function bindEvents() {
 async function init() {
   bindEvents();
   setDateLabels();
+  byId("sales-month").value = currentMonthKey();
   try {
     const saved = localStorage.getItem("teman-bulu-supabase");
     if (saved) {
